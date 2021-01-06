@@ -1,8 +1,9 @@
 import 'module-alias/register';
-import { BOT, MONGO, PREFIX } from '@root/config';
+import { MongoClient } from 'mongodb';
 import { SageClient } from '@lib/types/SageClient';
 import commandManager from '@pieces/commandManager';
-import { MongoClient } from 'mongodb';
+import verification from '@pieces/verification';
+import { BOT, MONGO, PREFIX } from '@root/config';
 
 const bot = new SageClient();
 
@@ -18,3 +19,4 @@ bot.on('ready', () => {
 });
 
 commandManager(bot);
+verification(bot);

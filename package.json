@@ -23,6 +23,7 @@
 	"homepage": "https://github.com/ud-cis-discord/SageV2#readme",
 	"dependencies": {
 		"discord.js": "^12.5.1",
+		"google-spreadsheet": "^3.1.15",
 		"module-alias": "^2.2.2",
 		"mongodb": "^3.6.3",
 		"node-fetch": "^2.6.1",
