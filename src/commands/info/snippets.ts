@@ -1,26 +1,40 @@
-import { Message } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import { Snippet } from '@lib/types/Snippet';
-import { ROLES } from '@root/config';
+import { PREFIX, ROLES } from '@root/config';
 
 export const decirption = 'Easily access useful bits of information about the server.';
 export const usage = '<list | run/view | add/new | update/edit | delete/remove> (snipName) | (snipContent)';
 export const extendedHelp = 'If given no arguemnts, you will recive the list of all avaliable snippets. Only staff can edit snips.';
-export const aliases = ['snip', 'snippet'];
+export const aliases = ['snip', 'snips', 'snippet'];
 
 type SnipCommand = 'list' | 'run' | 'add' | 'update' | 'delete';
 
-export function run(msg: Message, [subCommand, snip, contents]: [SnipCommand, string, string]): Promise<Message> {
-	return msg.channel.send(`**sub command**: ${subCommand}\n**snip**: ${snip}\n**content**: ${contents}`);
-	// switch (subCommand) {
-	// 	case 'run':
-	// 		return msg.client.mongo.collection('snips').findOne({ name: snip })
-	// 			.then((document: Snippet) => {
-	// 				if (!document) {
-	// 					return msg.channel.send(`There is no snippet with the name ${snip}`);
-	// 				}
-	// 				return msg.channel.send(document.content);
-	// 			});
-	// }
+export async function run(msg: Message, [subCommand, snipName, contents]: [SnipCommand, string, string]): Promise<Message> {
+	msg.channel.send(`**sub command**: ${subCommand}\n**snip**: ${snipName}\n**content**: ${contents}`);
+
+	const snippets: Array<Snippet> = await msg.client.mongo.collection('snips').find().toArray();
+	const snippet = snippets.find(snip => snip.name === snipName);
+	const newSnip: Snippet = { name: snipName, content: contents };
+
+	switch (subCommand) {
+		case 'list':
+			console.log(snippets);
+			return msg.channel.send(new MessageEmbed()
+				.setTitle('Avaliable Snippets')
+				.setColor('GOLD')
+				.setDescription(`\`${snippets.map(doc => `${PREFIX}${doc.name}`).join('`, `')}\``));
+		case 'run':
+			if (!snippet) {
+				return msg.channel.send(`There is no snippet with the name ${snipName}.`);
+			}
+			return msg.channel.send(snippet.content);
+		case 'add':
+			if (snippet) {
+				return msg.channel.send(`There is already a snippet called ${snipName}.`);
+			}
+			msg.client.mongo.collection('snips').insertOne(newSnip);
+			return msg.channel.send(`Created a snip with the name **${snipName}**.`);
+	}
 }
 
 
@@ -58,6 +72,7 @@ export function argParser(msg: Message, input: string): [SnipCommand, string, st
 		case 'list':
 		case '':
 			subCommand = 'list';
+			console.log([subCommand, snip.toLowerCase(), contents]);
 			break;
 		default:
 			subCommand = 'run';
@@ -70,5 +85,5 @@ export function argParser(msg: Message, input: string): [SnipCommand, string, st
 
 	if (snip !== undefined && (snip.includes(' ') || snip === '')) throw 'Invalid snippet name';
 
-	return [subCommand, snip, contents];
+	return [subCommand, snip.toLowerCase(), contents];
 }
