@@ -9,7 +9,7 @@ pipeline {
 			steps {
 				sh 'export JENKINS_NODE_COOKIE=dontKillMe'
 				sh 'echo "running build in temp workspace"'
-				configFileProvider([configFile(fileId: '4753db6f-0fa5-4575-b85e-a61a62bbfc81', targetLocation: 'config.ts')]) {}
+				configFileProvider([configFile(fileId: '512614b8-8b30-448f-80f5-dd2ef3d0d24d', targetLocation: 'config.ts')]) {}
 				sh 'npm run clean'
 				sh 'npm i'
 				sh 'npm run build'
