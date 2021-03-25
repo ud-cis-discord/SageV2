@@ -71,8 +71,7 @@ pipeline {
 					}
 				}
 				script { 
-					def discord_desc = "Deploy " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
-						"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
+					def discord_desc = "Deploy " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + "](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")"
 					if(stage_results == false && env.BRANCH_NAME == 'main') {
 						discord_desc = "!!!URGENT -- " + discord_desc
 					}
