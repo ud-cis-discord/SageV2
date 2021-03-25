@@ -1,3 +1,4 @@
+def boolean stage_results = false
 pipeline {
     agent any
 	environment {
@@ -7,11 +8,29 @@ pipeline {
 	stages {
 		stage('build') {
 			steps {
-				sh 'echo "running build in temp workspace"'
-				configFileProvider([configFile(fileId: '512614b8-8b30-448f-80f5-dd2ef3d0d24d', targetLocation: 'config.ts')]) {}
-				sh 'npm run clean'
-				sh 'npm i'
-				sh 'npm run build'
+				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+					sh 'echo "running build in temp workspace"'
+					configFileProvider([configFile(fileId: '512614b8-8b30-448f-80f5-dd2ef3d0d24d', targetLocation: 'config.ts')]) {}
+					sh 'npm run clean'
+					sh 'npm i'
+					sh 'npm run build'
+					script{ stage_results = true }
+				}
+				script { 
+					discordSend(
+						description: "Temp Build " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
+						"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
+						footer: env.BUILD_TAG,
+						link: env.BUILD_URL, 
+						result: currentBuild.currentResult, 
+						title: JOB_NAME, 
+						webhookURL: env.DISCORD_WEBHOOK
+					)
+					if (stage_results == false) {
+						sh 'exit 1'
+					}
+				}
+				
 			}
 		}
 		stage('test') {
