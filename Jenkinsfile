@@ -62,9 +62,9 @@ pipeline {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					script {
-						if(env.BRANCH_NAME == 'jenkinsHook') {
+						if(env.BRANCH_NAME == 'main') {
 							sh 'echo "rebuilding and deploying in prod directory..."'
-							sh 'cd /usr/local/sage/fakeDir && git pull && npm run clean && npm i && npm run build'
+							sh 'cd /usr/local/sage/SageV2 && git pull && npm run clean && npm i && npm run build'
 						} else {
 							echo 'build done, branch OK'
 						}
@@ -73,7 +73,7 @@ pipeline {
 				}
 				script { 
 					def discord_desc = "Deploy " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + "](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")"
-					if(stage_results == false && env.BRANCH_NAME == 'jenkinsHook') {
+					if(stage_results == false && env.BRANCH_NAME == 'main') {
 						discord_desc = "URGENT!! -- " + discord_desc
 					}
 					discordSend(
@@ -94,7 +94,7 @@ pipeline {
 	post {
 		always {
             discordSend(
-				description: "Build " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
+				description: "Pipeline " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
 				"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
 				footer: env.BUILD_TAG,
 				link: env.BUILD_URL, 
