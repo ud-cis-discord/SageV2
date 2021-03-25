@@ -86,6 +86,7 @@ pipeline {
 					if (stage_results == false) {
 						sh 'exit 1'
 					}
+				}
 			}
 		}
 	}
