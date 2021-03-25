@@ -6,7 +6,7 @@ pipeline {
 		DISCORD_WEBHOOK=credentials('3fbb794c-1c40-4471-9eee-d147d4506046')
     }
 	stages {
-		stage('build') {
+		stage('Test Build') {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					sh 'echo "running build in temp workspace"'
@@ -18,12 +18,12 @@ pipeline {
 				}
 				script { 
 					discordSend(
-						description: "Temp Build " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
+						description: "Test build " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
 						"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
 						footer: env.BUILD_TAG,
 						link: env.BUILD_URL, 
 						result: currentBuild.currentResult, 
-						title: JOB_NAME + " -- Temp Build", 
+						title: JOB_NAME + " -- Test Build", 
 						webhookURL: env.DISCORD_WEBHOOK
 					)
 					if (stage_results == false) {
@@ -34,7 +34,7 @@ pipeline {
 				
 			}
 		}
-		stage('test') {
+		stage('Lint') {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					sh 'echo "testing in temp workspace..."'
@@ -58,7 +58,7 @@ pipeline {
 				}
 			}
 		}
-		stage('deploy') {
+		stage('Deploy') {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					script {
@@ -74,7 +74,7 @@ pipeline {
 				script { 
 					def discord_desc = "Deploy " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + "](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")"
 					if(stage_results == false && env.BRANCH_NAME == 'jenkinsHook') {
-						discord_desc = "!!!URGENT -- " + discord_desc
+						discord_desc = "URGENT!! -- " + discord_desc
 					}
 					discordSend(
 						description: discord_desc, 
