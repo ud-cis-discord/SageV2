@@ -32,4 +32,17 @@ pipeline {
 			}
 		}
 	}
+	post {
+		always {
+            discordSend(
+				description: "Build " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
+				"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
+				footer: env.BUILD_TAG,
+				link: env.BUILD_URL, 
+				result: currentBuild.currentResult, 
+				title: JOB_NAME, 
+				webhookURL: env.DISCORD_WEBHOOK
+			)
+        }
+	}
 }
