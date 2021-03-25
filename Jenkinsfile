@@ -68,11 +68,12 @@ pipeline {
 						} else {
 							echo 'build done, branch OK'
 						}
+						stage_results = true
 					}
 				}
 				script { 
 					def discord_desc = "Deploy " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + "](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")"
-					if(stage_results == false && env.BRANCH_NAME == 'main') {
+					if(stage_results == false && env.BRANCH_NAME == 'jenkinsHook') {
 						discord_desc = "!!!URGENT -- " + discord_desc
 					}
 					discordSend(
