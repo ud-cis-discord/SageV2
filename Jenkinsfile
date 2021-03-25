@@ -62,9 +62,9 @@ pipeline {
 			steps {
 				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
 					script {
-						if(env.BRANCH_NAME == 'main') {
+						if(env.BRANCH_NAME == 'jenkinsHook') {
 							sh 'echo "rebuilding and deploying in prod directory..."'
-							sh 'cd /usr/local/sage/SageV2 && git pull && npm run clean && npm i && npm run build'
+							sh 'cd /usr/local/sage/fakeDir && git pull && npm run clean && npm i && npm run build'
 						} else {
 							echo 'build done, branch OK'
 						}
