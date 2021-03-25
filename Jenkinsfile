@@ -23,32 +23,70 @@ pipeline {
 						footer: env.BUILD_TAG,
 						link: env.BUILD_URL, 
 						result: currentBuild.currentResult, 
-						title: JOB_NAME, 
+						title: JOB_NAME + " -- Temp Build", 
 						webhookURL: env.DISCORD_WEBHOOK
 					)
 					if (stage_results == false) {
 						sh 'exit 1'
 					}
+					stage_results = true
 				}
 				
 			}
 		}
 		stage('test') {
 			steps {
-				sh 'echo "testing in temp workspace..."'
-				sh 'npm run test'
+				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+					sh 'echo "testing in temp workspace..."'
+					sh 'npm run test'
+					script{ stage_results = true }
+				}
+				script { 
+					discordSend(
+						description: "Lint " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
+						"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
+						footer: env.BUILD_TAG,
+						link: env.BUILD_URL, 
+						result: currentBuild.currentResult, 
+						title: JOB_NAME + " -- Lint", 
+						webhookURL: env.DISCORD_WEBHOOK
+					)
+					if (stage_results == false) {
+						sh 'exit 1'
+					}
+					stage_results = true
+				}
 			}
 		}
 		stage('deploy') {
 			steps {
-				script {
-					if(env.BRANCH_NAME == 'main') {
-						sh 'echo "rebuilding and deploying in prod directory..."'
-						sh 'cd /usr/local/sage/SageV2 && git pull && npm run clean && npm i && npm run build'
-					} else {
-						echo 'build done, branch OK'
+				catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+					script {
+						if(env.BRANCH_NAME == 'main') {
+							sh 'echo "rebuilding and deploying in prod directory..."'
+							sh 'cd /usr/local/sage/SageV2 && git pull && npm run clean && npm i && npm run build'
+						} else {
+							echo 'build done, branch OK'
+						}
 					}
 				}
+				script { 
+					def discord_desc = "Deploy " + currentBuild.currentResult + " on branch [" + env.BRANCH_NAME + 
+						"](https://github.com/ud-cis-discord/SageV2/commit/" + env.GIT_COMMIT + ")", 
+					if(stage_results == false && env.BRANCH_NAME == 'main') {
+						discord_desc = "!!!URGENT -- " + discord_desc
+					}
+					discordSend(
+						description: discord_desc, 
+						footer: env.BUILD_TAG,
+						link: env.BUILD_URL, 
+						result: currentBuild.currentResult, 
+						title: JOB_NAME + " -- Lint", 
+						webhookURL: env.DISCORD_WEBHOOK
+					)
+					if (stage_results == false) {
+						sh 'exit 1'
+					}
 			}
 		}
 	}

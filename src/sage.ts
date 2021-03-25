@@ -38,4 +38,3 @@ bot.once('ready', async () => {
 	console.log(`Serving ${bot.users.cache.size} users`);
 	bot.user.setActivity(`${PREFIX}help`, { type: 'PLAYING' });
 });
-if
