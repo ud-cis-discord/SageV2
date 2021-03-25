@@ -81,7 +81,7 @@ pipeline {
 						footer: env.BUILD_TAG,
 						link: env.BUILD_URL, 
 						result: currentBuild.currentResult, 
-						title: JOB_NAME + " -- Lint", 
+						title: JOB_NAME + " -- Deploy", 
 						webhookURL: env.DISCORD_WEBHOOK
 					)
 					if (stage_results == false) {
