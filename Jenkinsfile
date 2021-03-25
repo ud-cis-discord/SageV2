@@ -54,7 +54,7 @@ pipeline {
 					if (stage_results == false) {
 						sh 'exit 1'
 					}
-					stage_results = true
+					stage_results = false
 				}
 			}
 		}
