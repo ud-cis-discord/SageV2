@@ -1,7 +1,7 @@
 # Sage
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/ud-cis-discord/sagev2?color=000855) ![We use Typescript](https://img.shields.io/badge/written_in-typescript-000855?logo=typescript&logoColor=ddd) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ud-cis-discord/sagev2/Lint?color=000855&logo=github) ![GitHub repo size](https://img.shields.io/github/repo-size/ud-cis-discord/sagev2?color=000855&logo=github) ![Lines of code](https://img.shields.io/tokei/lines/github/ud-cis-discord/sagev2?color=000855&logo=github)
 
-Sage is a purpose build Discord bot to manage the UD CIS Discord server. Sage features a number of systems to encourage engagement and help facilitate learning.
+Sage is a purpose built Discord bot to manage the UD CIS Discord server. Sage features a number of systems to encourage engagement and help facilitate learning.
 <br>
 Some features of sage include:
 - 🧙‍♂️ Self-assignable roles
