@@ -12,14 +12,14 @@ export async function permissions(msg: Message): Promise<boolean> {
 	return adminPerms(msg);
 }
 
-export async function run(msg: Message, [title, project, labels, milestone]: [string, string, string[], string]): Promise<Message | void> {
+export async function run(msg: Message, [title, project, labels, milestone, body]: [string, string, string[], string, string]): Promise<Message | void> {
 	const newIssue = await msg.client.octokit.issues.create({
 		owner: 'ud-cis-discord',
 		repo: project,
 		title: title,
 		milestone: milestone || undefined,
 		labels: labels,
-		body: `<sub>Created by ${msg.member.displayName} via ${BOT.NAME}</sub>`
+		body: `${body}\n\n<sub>Created by ${msg.member.displayName} via ${BOT.NAME}</sub>`
 	}).catch(response => {
 		console.log(response);
 		let errormsg = '';
@@ -48,6 +48,7 @@ export async function argParser(_msg: Message, input: string): Promise<Array<str
 	let project = 'SageV2';
 	let labels = [];
 	let milestone = '';
+	let body = '';
 
 	if (splitArgs.find(str => str.includes('project'))) {
 		[, project] = splitArgs.find(str => str.includes('project')).split('=');
@@ -64,5 +65,13 @@ export async function argParser(_msg: Message, input: string): Promise<Array<str
 		[, milestone] = splitArgs.find(str => str.includes('milestone')).split('=');
 		if (!milestone) throw `Invalid format for milestone name, more help:\n${extendedHelp}`;
 	}
-	return [title, project, labels, milestone];
+
+	if (splitArgs.find(str => str.includes('body'))) {
+		[, body] = splitArgs.find(str => str.includes('body')).split('=');
+		if (!body) throw `Invalid format for body, more help:\n${extendedHelp}`;
+	} else if (splitArgs.find(str => str.includes('description'))) {
+		[, body] = splitArgs.find(str => str.includes('description')).split('=');
+		if (!body) throw `Invalid format for description, more help:\n${extendedHelp}`;
+	}
+	return [title, project, labels, milestone, body];
 }
