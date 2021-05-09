@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
 import { CHANNELS } from '@root/config';
 
-export const description = 'Submit a profile picture to the pfp contest.';
+export const description = 'Submit an image to the currently running contest.';
 export const extendedHelp = 'Exactly one file must be attached when running this command.';
 export const usage = '[more information]';
 export const enabled = false;
@@ -13,7 +13,7 @@ export async function run(msg: Message, [imgDesc]: [string]): Promise<Message> {
 	const submissionChannel = await msg.client.channels.fetch(CHANNELS.FEEDBACK) as TextChannel;
 	return submissionChannel.send(new MessageEmbed()
 		.setAuthor(msg.author.tag, msg.author.avatarURL({ dynamic: true }))
-		.setTitle('New pfp submission')
+		.setTitle('New contest submission')
 		.addField('URL', attachment.url)
 		.setDescription(imgDesc)
 		.setImage(attachment.url)
